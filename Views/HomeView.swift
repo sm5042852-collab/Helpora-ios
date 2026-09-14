@@ -1,14 +1,19 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject private var helpStore: HelpRequestStore
+    @EnvironmentObject private var profileStore: ProfileStore
+    @EnvironmentObject private var notificationStore: NotificationStore
     @State private var showingCreateHelp = false
+
+    var openRequests: Int { helpStore.requests.filter { !$0.isResolved }.count }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Together we are stronger.")
+                        Text(profileStore.profile.displayName.isEmpty ? "Together we are stronger." : "Hello, \(profileStore.profile.displayName)")
                             .font(.largeTitle.bold())
                         Text("Find help, offer support and build a safer community.")
                             .foregroundStyle(.secondary)
@@ -25,14 +30,33 @@ struct HomeView: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Community today").font(.title2.bold())
-                        CommunityCard(icon: "heart.fill", title: "Help requests", value: "0")
-                        CommunityCard(icon: "person.2.fill", title: "People nearby", value: "Growing")
-                        CommunityCard(icon: "checkmark.shield.fill", title: "Safety first", value: "Verified tools")
+                        CommunityCard(icon: "heart.fill", title: "Open requests", value: "\(openRequests)")
+                        CommunityCard(icon: "person.2.fill", title: "Your HP points", value: "\(profileStore.profile.hpPoints)")
+                        CommunityCard(icon: "checkmark.shield.fill", title: "Safety first", value: "Trust Center")
+                    }
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Quick actions").font(.title2.bold())
+                        NavigationLink { NotificationsView() } label: {
+                            Label("Notifications", systemImage: "bell.badge")
+                        }
+                        NavigationLink { TrustCenterView() } label: {
+                            Label("Safety and trust", systemImage: "checkmark.shield.fill")
+                        }
                     }
                 }
                 .padding()
             }
             .navigationTitle("HELPORA")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        NotificationsView()
+                    } label: {
+                        Image(systemName: "bell")
+                    }
+                }
+            }
             .sheet(isPresented: $showingCreateHelp) {
                 CreateHelpView()
             }
