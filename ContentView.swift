@@ -1,12 +1,15 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("helpora.onboardingComplete") private var onboardingComplete = false
+
     var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            HelpView().tabItem { Label("Help", systemImage: "heart.fill") }
-            ProfileView().tabItem { Label("Profile", systemImage: "person.fill") }
+        Group {
+            if onboardingComplete {
+                MainTabView()
+            } else {
+                OnboardingView()
+            }
         }
-        .tint(.purple)
     }
 }
