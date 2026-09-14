@@ -12,26 +12,27 @@ struct ProfileView: View {
                             .font(.system(size: 52))
                             .foregroundStyle(.purple)
                         VStack(alignment: .leading) {
-                            Text("Welcome to HELPORA")
-                                .font(.headline)
-                            Text("Complete your profile soon")
-                                .foregroundStyle(.secondary)
+                            Text("Welcome to HELPORA").font(.headline)
+                            Text("Complete your profile soon").foregroundStyle(.secondary)
                         }
                     }
                     .padding(.vertical, 6)
                 }
 
                 Section("Community") {
-                    Label("Trust Center", systemImage: "checkmark.shield")
+                    NavigationLink { TrustCenterView() } label: {
+                        Label("Trust Center", systemImage: "checkmark.shield")
+                    }
                     Label("HP Points", systemImage: "star.fill")
                     Label("My activity", systemImage: "clock.arrow.circlepath")
+                    Label("Saved items", systemImage: "bookmark.fill")
                 }
 
                 Section("App") {
-                    Label("Settings", systemImage: "gear")
-                    Button("Show onboarding again") {
-                        onboardingComplete = false
+                    NavigationLink { SettingsView() } label: {
+                        Label("Settings", systemImage: "gear")
                     }
+                    Button("Show onboarding again") { onboardingComplete = false }
                 }
             }
             .navigationTitle("Profile")
