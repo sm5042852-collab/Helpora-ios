@@ -2,7 +2,12 @@ import SwiftUI
 
 @main
 struct HelporaApp: App {
+    @StateObject private var helpStore = HelpRequestStore()
+
     var body: some Scene {
-        WindowGroup { ContentView() }
+        WindowGroup {
+            ContentView()
+                .environmentObject(helpStore)
+        }
     }
 }
