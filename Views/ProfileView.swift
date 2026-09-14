@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @AppStorage("helpora.onboardingComplete") private var onboardingComplete = false
+    @EnvironmentObject private var profileStore: ProfileStore
 
     var body: some View {
         NavigationStack {
@@ -12,18 +13,29 @@ struct ProfileView: View {
                             .font(.system(size: 52))
                             .foregroundStyle(.purple)
                         VStack(alignment: .leading) {
-                            Text("Welcome to HELPORA").font(.headline)
-                            Text("Complete your profile soon").foregroundStyle(.secondary)
+                            Text(profileStore.profile.displayName.isEmpty ? "Welcome to HELPORA" : profileStore.profile.displayName)
+                                .font(.headline)
+                            Text(profileStore.profile.city.isEmpty ? "Complete your profile" : profileStore.profile.city)
+                                .foregroundStyle(.secondary)
                         }
                     }
                     .padding(.vertical, 6)
+                }
+
+                Section("Profile") {
+                    NavigationLink { EditProfileView() } label: {
+                        Label("Edit profile", systemImage: "person.crop.circle")
+                    }
+                    LabeledContent("HP Points", value: "\(profileStore.profile.hpPoints)")
+                    if profileStore.profile.isVerified {
+                        Label("Verified member", systemImage: "checkmark.seal.fill")
+                    }
                 }
 
                 Section("Community") {
                     NavigationLink { TrustCenterView() } label: {
                         Label("Trust Center", systemImage: "checkmark.shield")
                     }
-                    Label("HP Points", systemImage: "star.fill")
                     Label("My activity", systemImage: "clock.arrow.circlepath")
                     Label("Saved items", systemImage: "bookmark.fill")
                 }
