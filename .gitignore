@@ -1,0 +1,20 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Secrets / local configuration
+.env
+.env.*
+!.env.example
+*.p12
+*.mobileprovision
+Secrets.swift
+Config.local.swift
+
+# Generated / local tooling
+.swiftpm/
+.build/
