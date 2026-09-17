@@ -7,13 +7,19 @@ struct CreateHelpView: View {
     @State private var details = ""
     @State private var category = "General"
 
+    private var cleanedTitle: String { InputValidator.title(title) }
+    private var cleanedDetails: String { InputValidator.details(details) }
+    private var canSave: Bool { !cleanedTitle.isEmpty && cleanedTitle.count <= InputValidator.maxTitleLength }
+
     var body: some View {
         NavigationStack {
             Form {
                 Section("What do you need?") {
                     TextField("Short title", text: $title)
+                        .onChange(of: title) { _, value in title = String(value.prefix(InputValidator.maxTitleLength)) }
                     TextField("Describe your request", text: $details, axis: .vertical)
                         .lineLimit(3...8)
+                        .onChange(of: details) { _, value in details = String(value.prefix(InputValidator.maxDetailsLength)) }
                 }
                 Section("Category") {
                     Picker("Category", selection: $category) {
@@ -27,7 +33,7 @@ struct CreateHelpView: View {
                     }
                 }
                 Section {
-                    Text("Saved requests stay on this device until the secure backend is connected.")
+                    Text("Requests are validated before they are saved. Production authentication and authorization will be enforced by the backend.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -37,10 +43,11 @@ struct CreateHelpView: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        store.add(title: title, details: details, category: category)
+                        store.add(title: cleanedTitle, details: cleanedDetails, category: category)
+                        SecurityLogger.info("Help request created")
                         dismiss()
                     }
-                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(!canSave)
                 }
             }
         }
